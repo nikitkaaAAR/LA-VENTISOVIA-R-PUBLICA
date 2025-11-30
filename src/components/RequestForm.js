@@ -1,11 +1,38 @@
+import { loadDrafts, saveDrafts } from '../storage.js';
+
 const RequestForm = ({ service, onSubmit }) => {
-  const [citizenName, setCitizenName] = React.useState('');
-  const [contact, setContact] = React.useState('');
-  const [comment, setComment] = React.useState('');
+  const draftKey = service?.id || 'general';
+  const initialDrafts = React.useMemo(() => loadDrafts(), []);
+  const initial = initialDrafts[draftKey] || {};
+  const [citizenName, setCitizenName] = React.useState(initial.citizenName || '');
+  const [contact, setContact] = React.useState(initial.contact || '');
+  const [comment, setComment] = React.useState(initial.comment || '');
+
+  React.useEffect(() => {
+    const allDrafts = loadDrafts();
+    saveDrafts({
+      ...allDrafts,
+      [draftKey]: { citizenName, contact, comment },
+    });
+  }, [citizenName, contact, comment, draftKey]);
+
+  React.useEffect(() => {
+    const allDrafts = loadDrafts();
+    const nextDraft = allDrafts[draftKey] || {};
+    setCitizenName(nextDraft.citizenName || '');
+    setContact(nextDraft.contact || '');
+    setComment(nextDraft.comment || '');
+  }, [draftKey]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     onSubmit({ serviceId: service?.id, serviceTitle: service?.title, citizenName, contact, comment });
+    const allDrafts = loadDrafts();
+    if (allDrafts[draftKey]) {
+      const nextDrafts = { ...allDrafts };
+      delete nextDrafts[draftKey];
+      saveDrafts(nextDrafts);
+    }
     setCitizenName('');
     setContact('');
     setComment('');

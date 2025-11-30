@@ -66,45 +66,37 @@ import RequestList from './components/RequestList.js';
 import Timeline from './components/Timeline.js';
 import Highlights from './components/Highlights.js';
 import Footer from './components/Footer.js';
-
-const STORAGE_KEY = 'requests';
-
-const readRequests = () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    return Array.isArray(saved) ? saved : [];
-  } catch (error) {
-    console.error('Не удалось загрузить сохранённые заявки', error);
-    return [];
-  }
-};
-
-const persistRequests = (data) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (error) {
-    console.error('Не удалось сохранить заявки', error);
-  }
-};
+import { loadRequests, loadUIState, saveRequests, saveUIState, STORAGE_KEYS_MAP } from './storage.js';
 
 const App = () => {
-  const [query, setQuery] = useState('');
-  const [activePage, setActivePage] = useState('home');
-  const [selectedServiceId, setSelectedServiceId] = useState(null);
+  const uiState = loadUIState();
+  const [query, setQuery] = useState(uiState.query || '');
+  const [activePage, setActivePage] = useState(uiState.activePage || 'home');
+  const [selectedServiceId, setSelectedServiceId] = useState(uiState.selectedServiceId || null);
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    setRequests(readRequests());
+    setRequests(loadRequests());
   }, []);
 
   useEffect(() => {
-    persistRequests(requests);
+    saveRequests(requests);
   }, [requests]);
 
   useEffect(() => {
+    saveUIState({ query, activePage, selectedServiceId });
+  }, [query, activePage, selectedServiceId]);
+
+  useEffect(() => {
     const handleStorage = (event) => {
-      if (event.key === STORAGE_KEY) {
-        setRequests(readRequests());
+      if (event.key === STORAGE_KEYS_MAP.requests) {
+        setRequests(loadRequests());
+      }
+      if (event.key === STORAGE_KEYS_MAP.ui) {
+        const nextUi = loadUIState();
+        setQuery(nextUi.query || '');
+        setActivePage(nextUi.activePage || 'home');
+        setSelectedServiceId(nextUi.selectedServiceId || null);
       }
     };
 
@@ -122,8 +114,9 @@ const App = () => {
   }, [query]);
 
   const handleSearchSubmit = (value) => {
-    setQuery(value);
-    setActivePage('home');
+    const nextQuery = value.trim();
+    setQuery(nextQuery);
+    handleNavigate('home');
     const servicesBlock = document.querySelector('.services');
     if (servicesBlock) {
       window.scrollTo({ top: servicesBlock.offsetTop - 20, behavior: 'smooth' });
@@ -132,20 +125,21 @@ const App = () => {
 
   const handleSelectService = (serviceId) => {
     setSelectedServiceId(serviceId);
-    setActivePage('service');
+    handleNavigate('service');
   };
 
   const handleCreateRequest = (payload) => {
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now();
     setRequests((prev) => [
       {
-        id: Date.now(),
+        id,
         status: 'новая',
         createdAt: new Date().toISOString(),
         ...payload,
       },
       ...prev,
     ]);
-    setActivePage('requests');
+    handleNavigate('requests');
   };
 
   const handleStatusChange = (requestId, nextStatus) => {
@@ -158,11 +152,22 @@ const App = () => {
 
   const selectedService = services.find((service) => service.id === selectedServiceId);
 
+  useEffect(() => {
+    if (activePage === 'service' && !selectedService) {
+      handleNavigate('home');
+    }
+  }, [activePage, selectedService]);
+
+  const handleNavigate = (next) => {
+    setActivePage(next);
+    if (next !== 'service') setSelectedServiceId(null);
+  };
+
   const renderPage = () => {
     if (activePage === 'service') {
       return React.createElement(ServiceDetail, {
         service: selectedService,
-        onBack: () => setActivePage('home'),
+        onBack: () => handleNavigate('home'),
         onSubmitRequest: handleCreateRequest,
       });
     }
@@ -173,8 +178,7 @@ const App = () => {
         onStatusChange: handleStatusChange,
         onDelete: handleDeleteRequest,
         onCreateAnother: () => {
-          setActivePage('home');
-          setSelectedServiceId(null);
+          handleNavigate('home');
         },
       });
     }
@@ -213,7 +217,7 @@ const App = () => {
     }
 
     return [
-      React.createElement(Hero, { key: 'hero', onNavigate: setActivePage }),
+      React.createElement(Hero, { key: 'hero', onNavigate: handleNavigate }),
       React.createElement(SearchBar, {
         key: 'search',
         query,
@@ -221,7 +225,7 @@ const App = () => {
         onSearch: handleSearchSubmit,
         onSelectTag: (tag) => {
           setQuery(tag);
-          setActivePage('home');
+          handleNavigate('home');
         },
       }),
       React.createElement(ServiceGrid, {
@@ -237,14 +241,7 @@ const App = () => {
   return React.createElement(
     'div',
     { className: 'page' },
-    React.createElement(Navigation, {
-      activePage,
-      onNavigate: (next) => {
-        setActivePage(next);
-        if (next !== 'service') setSelectedServiceId(null);
-      },
-      requestsCount: requests.length,
-    }),
+    React.createElement(Navigation, { activePage, onNavigate: handleNavigate, requestsCount: requests.length }),
     renderPage(),
     React.createElement(Footer, null)
   );
