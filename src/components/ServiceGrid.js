@@ -1,13 +1,16 @@
-const ServiceCard = ({ title, description, action }) =>
+const ServiceCard = ({ title, description, action, onOpen }) =>
   React.createElement(
     'article',
     { className: 'card' },
     React.createElement('h3', null, title),
     React.createElement('p', null, description),
-    React.createElement('button', { className: 'btn btn-secondary' }, action)
+    React.createElement('div', { className: 'card__actions' },
+      React.createElement('button', { className: 'btn btn-secondary', onClick: onOpen }, action),
+      React.createElement('button', { className: 'btn btn-ghost', onClick: onOpen }, 'Подробнее')
+    )
   );
 
-const ServiceGrid = ({ services }) =>
+const ServiceGrid = ({ services, onSelectService }) =>
   React.createElement(
     'section',
     { className: 'services' },
@@ -26,7 +29,9 @@ const ServiceGrid = ({ services }) =>
       'div',
       { className: 'services__grid' },
       services.length
-        ? services.map((service) => React.createElement(ServiceCard, { key: service.title, ...service }))
+        ? services.map((service) =>
+            React.createElement(ServiceCard, { key: service.title, ...service, onOpen: () => onSelectService(service.id) })
+          )
         : React.createElement(
             'p',
             { className: 'services__empty' },

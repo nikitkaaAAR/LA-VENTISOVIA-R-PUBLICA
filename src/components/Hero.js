@@ -1,7 +1,6 @@
-const Badge = ({ text }) =>
-  React.createElement('span', { className: 'badge' }, text);
+const Badge = ({ text }) => React.createElement('span', { className: 'badge' }, text);
 
-const Hero = () =>
+const Hero = ({ onNavigate }) =>
   React.createElement(
     'header',
     { className: 'hero' },
@@ -24,8 +23,8 @@ const Hero = () =>
       React.createElement(
         'div',
         { className: 'hero__actions' },
-        React.createElement('button', { className: 'btn btn-primary' }, 'Войти'),
-        React.createElement('button', { className: 'btn btn-ghost' }, 'Зарегистрироваться')
+        React.createElement('button', { className: 'btn btn-primary', onClick: () => onNavigate('requests') }, 'Мои заявки'),
+        React.createElement('button', { className: 'btn btn-ghost', onClick: () => onNavigate('help') }, 'Инструкции')
       ),
       React.createElement(
         'ul',
