@@ -1,4 +1,4 @@
-import { loadDrafts, saveDrafts } from '../storage.js';
+import { loadDrafts, saveDrafts, STORAGE_KEYS_MAP } from '../storage.js';
 
 const RequestForm = ({ service, onSubmit }) => {
   const draftKey = service?.id || 'general';
@@ -22,6 +22,22 @@ const RequestForm = ({ service, onSubmit }) => {
     setCitizenName(nextDraft.citizenName || '');
     setContact(nextDraft.contact || '');
     setComment(nextDraft.comment || '');
+  }, [draftKey]);
+
+  React.useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.storageArea !== window.localStorage) return;
+      if (event.key && event.key !== STORAGE_KEYS_MAP.drafts) return;
+
+      const allDrafts = loadDrafts();
+      const nextDraft = allDrafts[draftKey] || {};
+      setCitizenName(nextDraft.citizenName || '');
+      setContact(nextDraft.contact || '');
+      setComment(nextDraft.comment || '');
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, [draftKey]);
 
   const handleSubmit = (event) => {
