@@ -67,6 +67,26 @@ import Timeline from './components/Timeline.js';
 import Highlights from './components/Highlights.js';
 import Footer from './components/Footer.js';
 
+const STORAGE_KEY = 'requests';
+
+const readRequests = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    console.error('Не удалось загрузить сохранённые заявки', error);
+    return [];
+  }
+};
+
+const persistRequests = (data) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Не удалось сохранить заявки', error);
+  }
+};
+
 const App = () => {
   const [query, setQuery] = useState('');
   const [activePage, setActivePage] = useState('home');
@@ -74,17 +94,23 @@ const App = () => {
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('requests') || '[]');
-      setRequests(Array.isArray(saved) ? saved : []);
-    } catch (error) {
-      console.error('Не удалось загрузить данные', error);
-    }
+    setRequests(readRequests());
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('requests', JSON.stringify(requests));
+    persistRequests(requests);
   }, [requests]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === STORAGE_KEY) {
+        setRequests(readRequests());
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const filteredServices = useMemo(() => {
     if (!query.trim()) return services;
@@ -126,6 +152,10 @@ const App = () => {
     setRequests((prev) => prev.map((item) => (item.id === requestId ? { ...item, status: nextStatus } : item)));
   };
 
+  const handleDeleteRequest = (requestId) => {
+    setRequests((prev) => prev.filter((item) => item.id !== requestId));
+  };
+
   const selectedService = services.find((service) => service.id === selectedServiceId);
 
   const renderPage = () => {
@@ -141,6 +171,7 @@ const App = () => {
       return React.createElement(RequestList, {
         requests,
         onStatusChange: handleStatusChange,
+        onDelete: handleDeleteRequest,
         onCreateAnother: () => {
           setActivePage('home');
           setSelectedServiceId(null);

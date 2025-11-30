@@ -93,6 +93,11 @@ h3 { font-size: 18px; }
   color: var(--text);
 }
 
+.btn-ghost.btn-ghost--danger {
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.2);
+}
+
 .btn:hover { transform: translateY(-1px); }
 
 .hero {

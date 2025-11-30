@@ -1,4 +1,4 @@
-const RequestList = ({ requests, onStatusChange, onCreateAnother }) =>
+const RequestList = ({ requests, onStatusChange, onDelete, onCreateAnother }) =>
   React.createElement(
     'section',
     { className: 'requests' },
@@ -34,7 +34,12 @@ const RequestList = ({ requests, onStatusChange, onCreateAnother }) =>
                       className: `chip chip--button ${request.status === status ? 'chip--active' : ''}`,
                       onClick: () => onStatusChange(request.id, status),
                     }, status)
-                  )
+                  ),
+                  React.createElement('button', {
+                    type: 'button',
+                    className: 'btn btn-ghost btn-ghost--danger',
+                    onClick: () => onDelete?.(request.id),
+                  }, 'Удалить')
                 )
               ),
               React.createElement('div', { className: 'requests__body' },
