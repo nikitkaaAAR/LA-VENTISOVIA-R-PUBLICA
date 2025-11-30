@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SearchBar = ({ query, onQueryChange, onSearch, onSelectTag }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -20,6 +18,19 @@ const SearchBar = ({ query, onQueryChange, onSearch, onSelectTag }) => {
         'aria-label': 'Поиск по услугам',
       }),
       React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Найти')
+const SearchBar = () =>
+  React.createElement(
+    'section',
+    { className: 'search' },
+    React.createElement(
+      'div',
+      { className: 'search__box' },
+      React.createElement('input', {
+        type: 'text',
+        placeholder: 'Поиск по услугам: паспорт, водительское удостоверение, штрафы...',
+        'aria-label': 'Поиск по услугам',
+      }),
+      React.createElement('button', { className: 'btn btn-primary' }, 'Найти')
     ),
     React.createElement(
       'div',
@@ -39,5 +50,9 @@ const SearchBar = ({ query, onQueryChange, onSearch, onSelectTag }) => {
     )
   );
 };
+        React.createElement('span', { key: tag, className: 'chip' }, tag)
+      )
+    )
+  );
 
 export default SearchBar;

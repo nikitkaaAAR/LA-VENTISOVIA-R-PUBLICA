@@ -1,4 +1,3 @@
-import React from 'react';
 import RequestForm from './RequestForm.js';
 
 const ServiceDetail = ({ service, onBack, onSubmitRequest }) => {
