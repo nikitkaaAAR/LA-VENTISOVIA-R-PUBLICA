@@ -1,3 +1,5 @@
+import React from '../react.js';
+
 const Navigation = ({ activePage, onNavigate, requestsCount }) =>
   React.createElement(
     'nav',

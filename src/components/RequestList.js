@@ -1,3 +1,5 @@
+import React from '../react.js';
+
 const RequestList = ({ requests, onStatusChange, onDelete, onCreateAnother }) =>
   React.createElement(
     'section',

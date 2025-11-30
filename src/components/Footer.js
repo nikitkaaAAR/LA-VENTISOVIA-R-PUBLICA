@@ -1,3 +1,5 @@
+import React from '../react.js';
+
 const Footer = () =>
   React.createElement(
     'footer',

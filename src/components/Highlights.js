@@ -1,3 +1,5 @@
+import React from '../react.js';
+
 const Highlight = ({ title, description, accent }) =>
   React.createElement(
     'article',

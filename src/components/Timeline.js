@@ -1,3 +1,5 @@
+import React from '../react.js';
+
 const steps = [
   {
     title: 'Авторизация',

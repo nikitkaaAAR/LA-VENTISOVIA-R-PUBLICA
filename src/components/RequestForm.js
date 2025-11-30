@@ -1,3 +1,4 @@
+import React from '../react.js';
 import { loadDrafts, saveDrafts, STORAGE_KEYS_MAP } from '../storage.js';
 
 const RequestForm = ({ service, onSubmit }) => {

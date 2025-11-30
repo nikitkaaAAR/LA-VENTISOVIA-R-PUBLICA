@@ -1,10 +1,8 @@
+import React from '../react.js';
+
 const Badge = ({ text }) => React.createElement('span', { className: 'badge' }, text);
 
 const Hero = ({ onNavigate }) =>
-const Badge = ({ text }) =>
-  React.createElement('span', { className: 'badge' }, text);
-
-const Hero = () =>
   React.createElement(
     'header',
     { className: 'hero' },
@@ -29,8 +27,6 @@ const Hero = () =>
         { className: 'hero__actions' },
         React.createElement('button', { className: 'btn btn-primary', onClick: () => onNavigate('requests') }, 'Мои заявки'),
         React.createElement('button', { className: 'btn btn-ghost', onClick: () => onNavigate('help') }, 'Инструкции')
-        React.createElement('button', { className: 'btn btn-primary' }, 'Войти'),
-        React.createElement('button', { className: 'btn btn-ghost' }, 'Зарегистрироваться')
       ),
       React.createElement(
         'ul',
