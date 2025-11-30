@@ -13,7 +13,7 @@ const ServiceCard = ({ title, description, action, onOpen }) =>
 const ServiceGrid = ({ services, onSelectService }) =>
   React.createElement(
     'section',
-    { className: 'services' },
+    { className: 'services', id: 'all-services' },
     React.createElement(
       'div',
       { className: 'section__header' },
@@ -30,7 +30,7 @@ const ServiceGrid = ({ services, onSelectService }) =>
       { className: 'services__grid' },
       services.length
         ? services.map((service) =>
-            React.createElement(ServiceCard, { key: service.title, ...service, onOpen: () => onSelectService(service.id) })
+            React.createElement(ServiceCard, { key: service.id, ...service, onOpen: () => onSelectService(service.id) })
           )
         : React.createElement(
             'p',

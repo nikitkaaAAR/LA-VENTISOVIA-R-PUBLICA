@@ -73,11 +73,7 @@ const App = () => {
   const [query, setQuery] = useState(uiState.query || '');
   const [activePage, setActivePage] = useState(uiState.activePage || 'home');
   const [selectedServiceId, setSelectedServiceId] = useState(uiState.selectedServiceId || null);
-  const [requests, setRequests] = useState([]);
-
-  useEffect(() => {
-    setRequests(loadRequests());
-  }, []);
+  const [requests, setRequests] = useState(() => loadRequests());
 
   useEffect(() => {
     saveRequests(requests);
@@ -89,6 +85,8 @@ const App = () => {
 
   useEffect(() => {
     const handleStorage = (event) => {
+      if (event.storageArea !== window.localStorage) return;
+
       if (event.key === STORAGE_KEYS_MAP.requests) {
         setRequests(loadRequests());
       }
@@ -225,7 +223,7 @@ const App = () => {
         onSearch: handleSearchSubmit,
         onSelectTag: (tag) => {
           setQuery(tag);
-          handleNavigate('home');
+          handleSearchSubmit(tag);
         },
       }),
       React.createElement(ServiceGrid, {
