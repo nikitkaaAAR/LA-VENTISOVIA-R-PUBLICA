@@ -87,10 +87,10 @@ const App = () => {
     const handleStorage = (event) => {
       if (event.storageArea !== window.localStorage) return;
 
-      if (event.key === null || event.key === STORAGE_KEYS_MAP.requests) {
+      if (event.key === STORAGE_KEYS_MAP.requests) {
         setRequests(loadRequests());
       }
-      if (event.key === null || event.key === STORAGE_KEYS_MAP.ui) {
+      if (event.key === STORAGE_KEYS_MAP.ui) {
         const nextUi = loadUIState();
         setQuery(nextUi.query || '');
         setActivePage(nextUi.activePage || 'home');
@@ -244,5 +244,23 @@ const App = () => {
     React.createElement(Footer, null)
   );
 };
+import Hero from './components/Hero.js';
+import SearchBar from './components/SearchBar.js';
+import ServiceGrid from './components/ServiceGrid.js';
+import Timeline from './components/Timeline.js';
+import Highlights from './components/Highlights.js';
+import Footer from './components/Footer.js';
+
+const App = () =>
+  React.createElement(
+    'div',
+    { className: 'page' },
+    React.createElement(Hero, null),
+    React.createElement(SearchBar, null),
+    React.createElement(ServiceGrid, null),
+    React.createElement(Timeline, null),
+    React.createElement(Highlights, null),
+    React.createElement(Footer, null)
+  );
 
 export default App;
