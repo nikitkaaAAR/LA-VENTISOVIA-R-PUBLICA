@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from './react.js';
 import Navigation from './components/Navigation.js';
-import HeroSection from './components/Hero.js';
+import Hero from './components/Hero.js';
 import SearchBar from './components/SearchBar.js';
 import ServiceGrid from './components/ServiceGrid.js';
 import ServiceDetail from './components/ServiceDetail.js';
@@ -214,7 +214,7 @@ const App = () => {
     }
 
     return [
-      React.createElement(HeroSection, { key: 'hero', onNavigate: handleNavigate }),
+      React.createElement(Hero, { key: 'hero', onNavigate: handleNavigate }),
       React.createElement(SearchBar, {
         key: 'search',
         query,
